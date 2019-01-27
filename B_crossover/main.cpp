@@ -6,17 +6,17 @@
 int main() {
     freopen("crossover.in", "r", stdin);
     freopen("crossover.out", "w", stdout);
+    std::ios::sync_with_stdio(false);
 
     std::string s, trash;
     size_t n, m;
     std::cin >> m >> n;
-    getline(std::cin, trash);
 
-    std::vector<std::string> arr(m);
+    std::vector<std::string> arr(m + 100);
     for (size_t i = 0; i < m; ++i) {
-        getline(std::cin, arr[i]);
+        std::cin >> arr[i];
     }
-    getline(std::cin, s);
+    std::cin >> s;
 
     bool isFound = std::find(arr.begin(), arr.end(), s) != arr.end(), is1point = false, is2points = false, isNpoints = false;
     for (size_t i = 0; i < m; ++i) {
@@ -45,13 +45,13 @@ int main() {
             for (size_t j = 0; j < m; ++j) {
                 int pos = 0;
                 while (pos < n && s[pos] == arr[i][pos]) {
-                    pos++;
+                    ++pos;
                 }
                 while (pos < n && s[pos] == arr[j][pos]) {
-                    pos++;
+                    ++pos;
                 }
                 while (pos < n && s[pos] == arr[i][pos]) {
-                    pos++;
+                    ++pos;
                 }
                 if (pos == n) {
                     is2points = true;
@@ -64,11 +64,19 @@ int main() {
             }
         }
 
+        int cnt = 0;
         for (int i = 0; i < m; ++i) {
             for (int j = i + 1; j < m; ++j) {
                 bool cur = true;
-                for (int pos = 0; pos < n; pos++) {
-                    if ((arr[i][pos] != s[pos]) && (arr[j][pos] != s[pos])) cur = false;
+                for (int pos = 0; pos < n; ++pos) {
+                    if ((arr[i][pos] != s[pos]) && (arr[j][pos] != s[pos])) {
+                        cur = false;
+                    }
+                    ++cnt;
+                    if (cnt > 1000001) {
+                        std::cout << "NO\nNO\nNO\n";
+                        return 0;
+                    }
                 }
                 isNpoints |= cur;
             }

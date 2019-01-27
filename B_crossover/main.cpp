@@ -1,87 +1,82 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-
-std::vector<std::string> arr;
-std::string s;
-size_t n, m;
-
-bool one_point() {
-    for (size_t i = 0; i < m; ++i) {
-        for (size_t j = 0; j < m; ++j) {
-            int pos = 0;
-            while (pos < n && s[pos] == arr[i][pos]) {
-                ++pos;
-            }
-            while (pos < n && s[pos] == arr[j][pos]) {
-                ++pos;
-            }
-            if (pos == n) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool two_points() {
-    for (size_t i = 0; i < m; ++i) {
-        for (size_t j = 0; j < m; ++j) {
-            int pos = 0;
-            while (pos < n && s[pos] == arr[i][pos]) {
-                pos++;
-            }
-            while (pos < n && s[pos] == arr[j][pos]) {
-                pos++;
-            }
-            while (pos < n && s[pos] == arr[i][pos]) {
-                pos++;
-            }
-            if (pos == n) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool many_points() {
-    bool ok = false;
-    for (int i = 0; i < m; ++i) {
-        for (int j = i + 1; j < m; ++j) {
-            bool cur = true;
-            for (int pos = 0; pos < n; pos++) {
-                if ((arr[i][pos] != s[pos]) && (arr[j][pos] != s[pos])) cur = false;
-            }
-            ok |= cur;
-        }
-    }
-    return ok;
-}
+#include <cstdio>
 
 int main() {
     freopen("crossover.in", "r", stdin);
     freopen("crossover.out", "w", stdout);
 
+    std::string s, trash;
+    size_t n, m;
     std::cin >> m >> n;
-    for (size_t i = 0; i < m; ++i) {
-        std::string loc;
-        std::cin >> loc;
-        arr.push_back(loc);
-    }
-    std::cin >> s;
+    getline(std::cin, trash);
 
-    if (std::find(arr.begin(), arr.end(), s) != arr.end() || one_point()) {
-        std::cout << "YES\nYES\nYES\n";
-    } else {
-        if (two_points()) {
-            std::cout << "NO\nYES\nYES\n";
-        } else {
-            if (many_points()) {
-                std::cout << "NO\nNO\nYES\n";
-            } else {
-                std::cout << "NO\nNO\nNO\n";
+    std::vector<std::string> arr(m);
+    for (size_t i = 0; i < m; ++i) {
+        getline(std::cin, arr[i]);
+    }
+    getline(std::cin, s);
+
+    bool isFound = std::find(arr.begin(), arr.end(), s) != arr.end(), is1point = false, is2points = false, isNpoints = false;
+    for (size_t i = 0; i < m; ++i) {
+        for (size_t j = 0; j < m; ++j) {
+            int pos = 0;
+            while (pos < n && s[pos] == arr[i][pos]) {
+                ++pos;
             }
+            while (pos < n && s[pos] == arr[j][pos]) {
+                ++pos;
+            }
+            if (pos == n) {
+                is1point = true;
+                break;
+            }
+        }
+        if (is1point) break;
+    }
+
+
+    if (isFound || is1point) {
+        std::cout << "YES\nYES\nYES\n";
+        return 0;
+    } else {
+        for (size_t i = 0; i < m; ++i) {
+            for (size_t j = 0; j < m; ++j) {
+                int pos = 0;
+                while (pos < n && s[pos] == arr[i][pos]) {
+                    pos++;
+                }
+                while (pos < n && s[pos] == arr[j][pos]) {
+                    pos++;
+                }
+                while (pos < n && s[pos] == arr[i][pos]) {
+                    pos++;
+                }
+                if (pos == n) {
+                    is2points = true;
+                    break;
+                }
+            }
+            if (is2points) {
+                std::cout << "NO\nYES\nYES\n";
+                return 0;
+            }
+        }
+
+        for (int i = 0; i < m; ++i) {
+            for (int j = i + 1; j < m; ++j) {
+                bool cur = true;
+                for (int pos = 0; pos < n; pos++) {
+                    if ((arr[i][pos] != s[pos]) && (arr[j][pos] != s[pos])) cur = false;
+                }
+                isNpoints |= cur;
+            }
+        }
+        if (isNpoints) {
+            std::cout << "NO\nNO\nYES\n";
+        } else {
+            std::cout << "NO\nNO\nNO\n";
         }
     }
 
